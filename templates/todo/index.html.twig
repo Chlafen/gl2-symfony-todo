@@ -3,9 +3,9 @@
 {% block title %}Hello TodoController!{% endblock %}
 
 {% block body %}
-<div class="d-flex flex-column ">
+<div class="d-flex flex-column align-items-center ">
     <i><h1 class="text-center mt-4 mb-4 text-light i">Todo List Keeper</h1></i>
-    <div class="d-flex flex-column  p-2 m-2 bg-light rounded ">  
+    <div class="d-flex flex-column p-2 m-2 bg-light rounded w-100" style="max-width:800px;">  
       <h3 class="text-center m-2">Add a Todo</h3>
       <form class="form-horizontal">
         <div class="form-group">
@@ -21,22 +21,23 @@
           </div>
         </div>
       </form>
+        <code class="text-danger mt-2 error"></code>
         <div class="form-group mt-3">
           <div class="col-sm-offset-2 col-sm-10">
             <button class="btn btn-success" onclick="createTodo()">Create</button>
           </div>
         </div>
     </div>
-    <div class="d-flex flex-column  text-dark  flex-wrap"> 
-      <div class="d-flex flex-column p-2 m-2 bg-light rounded "> 
+    <div class="d-flex flex-column m-2 text-dark  flex-wrap w-100"      style="max-width:800px;"> 
+      <div class="d-flex flex-column   bg-light rounded "> 
         <h3 class="text-center m-2">Todo List</h3>
         <ul class="list-group">
           {% for todo in todos %}
-            <li class="list-group-item d-flex flex-column">
+            <li class="list-group-item d-flex flex-column position-relative pr-5">
               <p class="m-0 text-uppercase font-weight-bold">{{ todo.title }}</p>
               <p class="m-0">{{ todo.description }}</p>
               <p class="m-0 align-self-end font-weight-light text-secondary">{{ todo.created_at|date('d/m/Y H:i') }}</p>
-              <button class="btn btn-danger btn-sm m-2" onclick="deleteTodo({{ todo.id }})">Delete</button>
+              <button class="btn btn-danger align-self-center btn-sm h1 w-25 position-absolute" onclick="deleteTodo({{ todo.id }})" style="max-width:max-content; top: 4px; right:4px">X</button>
             </li>
           {% endfor %}
         </ul>
@@ -50,9 +51,12 @@
 {% block javascripts %}
 <script>
   function createTodo(){
-    var title = document.getElementById('title').value;
-    var description = document.getElementById('description').value;
-
+    let title = document.getElementById('title').value;
+    let description = document.getElementById('description').value;
+    if(title === '' || description === ''){
+      document.querySelector('.error').innerHTML = 'Please fill all the fields';
+      return;
+    }
     fetch('/todo/add/'+title+'/'+description)
     .then(function(response) {
       return response;
