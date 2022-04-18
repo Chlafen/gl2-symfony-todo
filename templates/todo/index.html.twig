@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello TodoController!{% endblock %}
+
+{% block body %}
+<div class="d-flex flex-column ">
+    <i><h1 class="text-center mt-4 mb-4 text-light i">Todo List Keeper</h1></i>
+    <div class="d-flex flex-column  p-2 m-2 bg-light rounded ">  
+      <h3 class="text-center m-2">Add a Todo</h3>
+      <form class="form-horizontal">
+        <div class="form-group">
+          <label for="title" class="col-sm-2 control-label">Title</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="title" placeholder="Title" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="description" class="col-sm-2 control-label">Description</label>
+          <div class="col-sm-10">
+            <textarea class="form-control" id="description" placeholder="Description" required></textarea>
+          </div>
+        </div>
+      </form>
+        <div class="form-group mt-3">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button class="btn btn-success" onclick="createTodo()">Create</button>
+          </div>
+        </div>
+    </div>
+    <div class="d-flex flex-column  text-dark  flex-wrap"> 
+      <div class="d-flex flex-column p-2 m-2 bg-light rounded "> 
+        <h3 class="text-center m-2">Todo List</h3>
+        <ul class="list-group">
+          {% for todo in todos %}
+            <li class="list-group-item d-flex flex-column">
+              <p class="m-0 text-uppercase font-weight-bold">{{ todo.title }}</p>
+              <p class="m-0">{{ todo.description }}</p>
+              <p class="m-0 align-self-end font-weight-light text-secondary">{{ todo.created_at|date('d/m/Y H:i') }}</p>
+              <button class="btn btn-danger btn-sm m-2" onclick="deleteTodo({{ todo.id }})">Delete</button>
+            </li>
+          {% endfor %}
+        </ul>
+        {% if todos ==  []%}
+            <p class="mt-4 text-center">No Todos Yet</p>
+        {% endif %}
+      </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+<script>
+  function createTodo(){
+    var title = document.getElementById('title').value;
+    var description = document.getElementById('description').value;
+
+    fetch('/todo/add/'+title+'/'+description)
+    .then(function(response) {
+      return response;
+    })
+    .then(()=>{
+      window.location.href = '/todo';
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+    
+  }
+
+  function deleteTodo(id){
+    fetch('/todo/delete/'+id, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+    window.location.reload();
+
+  }
+</script>
+{% endblock %}
